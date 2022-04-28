@@ -1,6 +1,6 @@
 {
   "name": "react-swift-form",
-  "version": "0.0.1",
+  "version": "0.0.0-development",
   "title": "React Swift Form",
   "description": "Yet another React form library, for React and React Native. But with a focus on only performance.",
   "private": false,
@@ -32,9 +32,10 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier -c \"src/**/*.{ts,tsx}\"",
     "lint": "yarn lint:check --fix",
-    "lint:check": "eslint \"src/**/*.{ts,tsx}\""
+    "lint:check": "eslint \"src/**/*.{ts,tsx}\"",
+    "semantic-release": "semantic-release",
+    "commit": "git-cz"
   },
-  "dependencies": {},
   "peerDependencies": {
     "react": ">=17.0.0"
   },
@@ -50,6 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "babel-eslint": "^10.1.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.7.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.3.0",
@@ -64,7 +66,24 @@
     "rollup": "^2.67.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "semantic-release": "^19.0.2",
     "tslib": "^2.3.1",
     "typescript": "^4.4.2"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
