@@ -29,6 +29,7 @@
     "build": "yarn clean-build && yarn rollup-build",
     "rollup-build": "rollup -c",
     "clean-build": "rimraf dist",
+    "prepack": "yarn build",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier -c \"src/**/*.{ts,tsx}\"",
     "lint": "yarn lint:check --fix",
