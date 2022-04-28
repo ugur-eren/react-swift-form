@@ -1,0 +1,6 @@
+build
+coverage
+public
+docs
+
+*.js
