@@ -4,6 +4,20 @@ Yet another React form library, for React and React Native. Key difference from 
 
 ## Quick Start
 
+Install the React Swift Form using your favorite package manager.
+
+npm:
+
+```bash
+npm install --save react-swift-form
+```
+
+yarn:
+
+```bash
+yarn add react-swift-form
+```
+
 Wrap your form content in the `<Form>` component.
 
 ```jsx
