@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
 
 import {useContext, useCallback, useMemo} from 'react';
-import {FormContext, ChangeStateAction} from './FormProvider';
+import {FormContext, ChangeStateAction, ValidatorContext} from './FormProvider';
 
 export interface FieldChildrenProps<T = any> {
   /**
@@ -10,11 +10,22 @@ export interface FieldChildrenProps<T = any> {
   value: T;
 
   /**
+   * Error message for the field.
+   */
+  error?: string;
+
+  /**
    * Changes the value of the form field.
    * It will accept the new state or a function that will be called with the previous state as a parameter.
    * Just like how you would use `setState` function of a useState hook.
    */
   changeValue: (value: ChangeStateAction<T>) => unknown;
+
+  /**
+   * Changes the error of the form field.
+   * You will not need to use this function if you are using the validator prop.
+   */
+  changeError: (value: ChangeStateAction<T>) => unknown;
 }
 
 export interface FieldProps<T = any> {
@@ -58,19 +69,38 @@ export interface FieldProps<T = any> {
  * </details>
  */
 export const Field: React.VFC<FieldProps> = ({id, children}) => {
-  const [state, dispatch] = useContext(FormContext);
+  const [{values, errors}, dispatch] = useContext(FormContext);
+  const validator = useContext(ValidatorContext);
 
-  const currentState = state[id];
+  const currentValue = values[id];
+  const currentError = errors[id];
 
   const changeValue = useCallback(
     (action: FieldChildrenProps['changeValue']) => {
       dispatch({type: 'CHANGE_VALUE', payload: {id, action}});
+
+      try {
+        if (validator?.[id].__isYupSchema__) {
+          validator[id].validateSync(typeof action === 'function' ? action(currentValue) : action);
+
+          dispatch({type: 'CHANGE_ERROR', payload: {id, error: ''}});
+        }
+      } catch (err) {
+        dispatch({type: 'CHANGE_ERROR', payload: {id, error: (err as Error).message}});
+      }
+    },
+    [id, validator?.__isYupSchema__ && currentValue],
+  );
+
+  const changeError = useCallback(
+    (error: string) => {
+      dispatch({type: 'CHANGE_ERROR', payload: {id, error}});
     },
     [id],
   );
 
   return useMemo(
-    () => children({value: currentState, changeValue}),
-    [currentState, changeValue, children],
+    () => children({value: currentValue, error: currentError, changeValue, changeError}),
+    [currentValue, currentError, changeValue, changeError, children],
   );
 };

@@ -1,6 +1,6 @@
 # React Swift Form
 
-Yet another React form library, for React and React Native. Key difference from other form libraries is that it is built to be as fast as possible. No unnecessary re-renders.
+Yet another React form library, for React and React Native. Key difference from other form libraries is that it is built to be as fast as possible. No unnecessary re-renders, no unnecessary re-validations.
 
 ## Quick Start
 

@@ -1,9 +1,26 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
 
-import {useReducer, Dispatch, forwardRef, useImperativeHandle, createContext} from 'react';
+import {
+  useReducer,
+  Dispatch,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  createContext,
+  Reducer,
+} from 'react';
+import {AnySchema} from 'yup';
 
 // TODO: Fix types, remove any from all files
-export type StateType<T = any> = Record<string, T>;
+export type StateType<T = any> = {
+  values: Record<string, T>;
+  errors: Record<string, string>;
+};
+
+const INITIAL_STATE: StateType = {
+  values: {},
+  errors: {},
+};
 
 export type DispatchAction =
   | {
@@ -12,7 +29,15 @@ export type DispatchAction =
     }
   | {
       type: 'CHANGE_VALUES';
-      payload: StateType<any>;
+      payload: StateType<any>['values'];
+    }
+  | {
+      type: 'CHANGE_ERROR';
+      payload: {id: string; error: string};
+    }
+  | {
+      type: 'CHANGE_ERRORS';
+      payload: StateType<any>['errors'];
     }
   | {
       type: 'RESET';
@@ -22,26 +47,34 @@ export type DispatchAction =
 export type ChangeStateAction<T = any> = T | ((prevState: T) => T);
 
 // eslint-disable-next-line default-param-last
-const FormReducer = (state: StateType = {}, action: DispatchAction) => {
+const FormReducer: Reducer<StateType, DispatchAction> = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'CHANGE_VALUE': {
-      let newState = state[action.payload.id];
+      let newState = state.values[action.payload.id];
 
       if (typeof action.payload.action === 'function') {
-        newState = action.payload.action(state[action.payload.id]);
+        newState = action.payload.action(state.values[action.payload.id]);
       } else {
         newState = action.payload.action;
       }
 
-      return {...state, [action.payload.id]: newState};
+      return {...state, values: {...state.values, [action.payload.id]: newState}};
     }
 
     case 'CHANGE_VALUES': {
-      return {...state, ...action.payload};
+      return {...state, values: action.payload};
+    }
+
+    case 'CHANGE_ERROR': {
+      return {...state, errors: {...state.errors, [action.payload.id]: action.payload.error}};
+    }
+
+    case 'CHANGE_ERRORS': {
+      return {...state, errors: action.payload};
     }
 
     case 'RESET': {
-      return action.payload ? {...action.payload} : {};
+      return action.payload ? {...action.payload} : {values: {}, errors: {}};
     }
 
     default: {
@@ -50,20 +83,29 @@ const FormReducer = (state: StateType = {}, action: DispatchAction) => {
   }
 };
 
-export const FormContext = createContext<[StateType, Dispatch<DispatchAction>]>(null as any);
+export const FormContext = createContext<[StateType<any>, Dispatch<DispatchAction>]>(null as any);
+
+export const ValidatorContext = createContext<Record<string, AnySchema> | undefined>(undefined);
 
 export interface Props<T = any> {
   /**
    * Initial state of the form. This is required and all fields must be defined.
    */
-  initialState: StateType<T>;
+  readonly initialState: Readonly<StateType<T>['values']>;
+
+  /**
+   * Validator yup object schema.
+   */
+  validator?: Record<string, AnySchema>;
 
   children?: React.ReactNode;
 }
 
 interface RefHandle {
-  change: (state: StateType) => void;
   changeValue: (id: string, action: ChangeStateAction) => void;
+  changeValues: (state: StateType['values']) => void;
+  changeError: (id: string, error: string) => void;
+  changeErrors: (errors: StateType['errors']) => void;
   reset: () => void;
   clear: () => void;
 }
@@ -83,49 +125,81 @@ type FormProvider = RefHandle;
  *  ```
  * </details>
  */
-const FormProvider = forwardRef<RefHandle, Props>(({initialState, children}, ref) => {
-  const reducer = useReducer(FormReducer, initialState || {});
+const FormProvider = forwardRef<RefHandle, Props>(
+  ({initialState: initialStateProp, validator, children}, ref) => {
+    const initialState: StateType<any> = useMemo(
+      () => ({
+        values: initialStateProp,
+        errors: Object.fromEntries(Object.entries(initialStateProp).map(([key]) => [key, ''])),
+      }),
+      [initialStateProp],
+    );
 
-  /**
-   * Change the current state of the form with the given state.
-   * Only the fields that are defined in the state will be changed.
-   * @param state State to change to.
-   */
-  const change = (state: StateType) => {
-    reducer[1]({type: 'CHANGE_VALUES', payload: state});
-  };
+    const reducer = useReducer(FormReducer, initialState);
 
-  /**
-   * Change the value of the given field.
-   * @param id Identifier of the field to change.
-   * @param action State or state action to change the value with.
-   */
-  const changeValue = (id: string, action: ChangeStateAction) => {
-    reducer[1]({type: 'CHANGE_VALUE', payload: {id, action}});
-  };
+    /**
+     * Change the value of the given field.
+     * @param id Identifier of the field to change.
+     * @param action State or state action to change the value with.
+     */
+    const changeValue = (id: string, action: ChangeStateAction) => {
+      reducer[1]({type: 'CHANGE_VALUE', payload: {id, action}});
+    };
 
-  /**
-   * Reset the form to the initial state.
-   */
-  const reset = () => {
-    reducer[1]({type: 'RESET', payload: initialState});
-  };
+    /**
+     * Change the current values of the form with the given state.
+     * @param values Values to change to.
+     */
+    const changeValues = (values: StateType['values']) => {
+      reducer[1]({type: 'CHANGE_VALUES', payload: values});
+    };
 
-  /**
-   * Clear the form.
-   */
-  const clear = () => {
-    reducer[1]({type: 'RESET'});
-  };
+    /**
+     * Change the error of the given field.
+     * @param id Identifier of the field to change.
+     * @param error Error message.
+     */
+    const changeError = (id: string, error: string) => {
+      reducer[1]({type: 'CHANGE_ERROR', payload: {id, error}});
+    };
 
-  useImperativeHandle(ref, () => ({
-    change,
-    changeValue,
-    reset,
-    clear,
-  }));
+    /**
+     * Change the current errors of the form with the given errors.
+     * @param errors Error messages.
+     */
+    const changeErrors = (errors: StateType['errors']) => {
+      reducer[1]({type: 'CHANGE_ERRORS', payload: errors});
+    };
 
-  return <FormContext.Provider value={reducer}>{children}</FormContext.Provider>;
-});
+    /**
+     * Reset the form to the initial state.
+     */
+    const reset = () => {
+      reducer[1]({type: 'RESET', payload: initialState});
+    };
+
+    /**
+     * Clear the form.
+     */
+    const clear = () => {
+      reducer[1]({type: 'RESET'});
+    };
+
+    useImperativeHandle(ref, () => ({
+      changeValue,
+      changeValues,
+      changeError,
+      changeErrors,
+      reset,
+      clear,
+    }));
+
+    return (
+      <FormContext.Provider value={reducer}>
+        <ValidatorContext.Provider value={validator}>{children}</ValidatorContext.Provider>
+      </FormContext.Provider>
+    );
+  },
+);
 
 export {FormProvider};

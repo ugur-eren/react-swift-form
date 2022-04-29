@@ -1,7 +1,8 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
 
 import {useContext} from 'react';
-import {FormContext, StateType} from './FormProvider';
+import {ValidationError} from 'yup';
+import {FormContext, StateType, ValidatorContext} from './FormProvider';
 
 export interface SubmitChildrenProps {
   /**
@@ -14,7 +15,7 @@ export interface SubmitProps<T = any> {
   /**
    * A function that will be called when the form is submitted.
    */
-  onSubmit: (values: StateType<T>) => unknown;
+  onSubmit: (values: StateType<T>['values']) => unknown;
 
   /**
    * Component to render.
@@ -40,10 +41,30 @@ export interface SubmitProps<T = any> {
 export const Submit: React.VFC<SubmitProps> = (props) => {
   const {children, onSubmit} = props;
 
-  const [state] = useContext(FormContext);
+  const [{values}, dispatch] = useContext(FormContext);
+  const validator = useContext(ValidatorContext);
 
   const onSubmitWrapper = () => {
-    return onSubmit(state);
+    const errors: StateType['errors'] = {};
+
+    if (typeof validator === 'object') {
+      Object.entries(validator).forEach(([schemaId, schema]) => {
+        if (schema?.__isYupSchema__) {
+          try {
+            schema.validateSync(values[schemaId]);
+          } catch (err) {
+            errors[schemaId] = (err as ValidationError).message;
+          }
+        }
+      });
+    }
+
+    if (Object.keys(errors).length > 0) {
+      dispatch({type: 'CHANGE_ERRORS', payload: errors});
+      return undefined;
+    }
+
+    return onSubmit(values);
   };
 
   return children({submit: onSubmitWrapper});
