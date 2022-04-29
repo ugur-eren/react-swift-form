@@ -68,7 +68,7 @@ export interface FieldProps<T = any> {
  *  ```
  * </details>
  */
-export const Field: React.VFC<FieldProps> = ({id, children}) => {
+export const Field: React.FC<FieldProps> = ({id, children}) => {
   const [{values, errors}, dispatch] = useContext(FormContext);
   const validator = useContext(ValidatorContext);
 

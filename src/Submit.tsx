@@ -38,7 +38,7 @@ export interface SubmitProps<T = any> {
  *  ```
  * </details>
  */
-export const Submit: React.VFC<SubmitProps> = (props) => {
+export const Submit: React.FC<SubmitProps> = (props) => {
   const {children, onSubmit} = props;
 
   const [{values}, dispatch] = useContext(FormContext);

@@ -55,7 +55,7 @@ export interface ReadFieldProps<T = any> {
  *  ```
  * </details>
  */
-export const ReadField: React.VFC<ReadFieldProps> = ({id, children}) => {
+export const ReadField: React.FC<ReadFieldProps> = ({id, children}) => {
   const [{values, errors}] = useContext(FormContext);
 
   const currentValue = !Array.isArray(id)
