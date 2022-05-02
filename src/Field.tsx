@@ -25,7 +25,7 @@ export interface FieldChildrenProps<T = any> {
    * Changes the error of the form field.
    * You will not need to use this function if you are using the validator prop.
    */
-  changeError: (value: ChangeStateAction<T>) => unknown;
+  changeError: (error: string) => unknown;
 }
 
 export interface FieldProps<T = any> {
