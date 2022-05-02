@@ -32,6 +32,12 @@ Wrap your form elements with the `<Field>` component.
 </Field>
 ```
 
+## Example
+
+You can open the example snack project with expo.
+
+[https://snack.expo.dev/@truetiem/react-swift-form-example](https://snack.expo.dev/@truetiem/react-swift-form-example)
+
 ## Why use React Swift Form?
 
 React Swift Form is actually meant to be used with React Native. Handling form data and performance in React is easy and there are many libraries out there. But React Native is a whole different story. Every re-render is a performance hit, especially on low-end devices. This library is built to be as fast as possible, without unnecessary re-renders. Since it uses Context API, you can easily use it with any React or React Native app.
