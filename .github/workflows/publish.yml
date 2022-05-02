@@ -26,6 +26,12 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
+      - name: ESLint
+        run: yarn lint:check
+
+      - name: Prettier
+        run: yarn format:check
+
       - name: Build
         run: yarn build
 
