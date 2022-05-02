@@ -41,6 +41,5 @@ React Swift Form is actually meant to be used with React Native. Handling form d
 ### Todos
 
 - [ ] Strict types
-- [ ] Documentation
 - [ ] Stateless form field
 - [ ] Tests
