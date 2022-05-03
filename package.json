@@ -2,7 +2,7 @@
   "name": "react-swift-form",
   "version": "0.0.0-development",
   "title": "React Swift Form",
-  "description": "Yet another React form library, for React and React Native. But with a focus on only performance.",
+  "description": "Form library for React and React Native, with a focus on performance.",
   "private": false,
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -18,10 +18,16 @@
   "bugs": {
     "url": "https://github.com/ugur-eren/react-swift-form/issues"
   },
+  "author": {
+    "name": "Ugur Eren",
+    "email": "contact@ugureren.net",
+    "url": "https://ugureren.net"
+  },
   "keywords": [
     "front-end",
     "react",
     "react-native",
+    "forms",
     "form"
   ],
   "license": "MIT",

@@ -1,16 +1,16 @@
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ugur-eren/react-swift-form/CI?style=flat-square)
+![npm bundle size](https://img.shields.io/bundlephobia/min/react-swift-form?style=flat-square)
+![npms.io (maintenance)](https://img.shields.io/npms-io/maintenance-score/react-swift-form?style=flat-square)
+![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/react-swift-form?style=flat-square)
+![GitHub top language](https://img.shields.io/github/languages/top/ugur-eren/react-swift-form?style=flat-square)
+
 # React Swift Form
 
-Yet another React form library, for React and React Native. Key difference from other form libraries is that it is built to be as fast as possible. No unnecessary re-renders, no unnecessary re-validations.
+Form library for React and React Native. Key difference from other form libraries is that it is built to be as fast as possible. No unnecessary re-renders, no unnecessary re-validations.
 
 ## Quick Start
 
 Install the React Swift Form using your favorite package manager.
-
-npm:
-
-```bash
-npm install --save react-swift-form
-```
 
 yarn:
 
@@ -18,10 +18,16 @@ yarn:
 yarn add react-swift-form
 ```
 
+npm:
+
+```bash
+npm install --save react-swift-form
+```
+
 Wrap your form content in the `<Form>` component.
 
 ```jsx
-<FormProvider>{/* Your form elements and other content */}</FormProvider>
+<Form>{/* Your form elements and other content */}</Form>
 ```
 
 Wrap your form elements with the `<Field>` component.
@@ -34,7 +40,7 @@ Wrap your form elements with the `<Field>` component.
 
 ## Example
 
-You can open the example snack project with expo.
+You can view the example snack project from here:
 
 [https://snack.expo.dev/@truetiem/react-swift-form-example](https://snack.expo.dev/@truetiem/react-swift-form-example)
 
