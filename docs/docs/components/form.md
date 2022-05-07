@@ -129,8 +129,6 @@ It is not recommended to change this prop after the form is rendered.
 | -------------------- | --------------------------------------------- |
 | Record<string, any\> | <div class="required as-badge">Required</div> |
 
----
-
 ### validator
 
 The `validator` prop is a plain object that contains validation yup schemas for form elements.
@@ -142,6 +140,8 @@ Validator items can be any yup schema.
 | Type                                 | Default     |
 | ------------------------------------ | ----------- |
 | Partial<Record<string, AnySchema\>\> | `undefined` |
+
+---
 
 ## Methods
 
