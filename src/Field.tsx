@@ -79,17 +79,17 @@ export const Field: React.FC<FieldProps> = ({id, children}) => {
     (action: FieldChildrenProps['changeValue']) => {
       dispatch({type: 'CHANGE_VALUE', payload: {id, action}});
 
-      try {
-        if (validator?.[id].__isYupSchema__) {
+      if (validator?.[id]?.__isYupSchema__) {
+        try {
           validator[id].validateSync(typeof action === 'function' ? action(currentValue) : action);
 
           dispatch({type: 'CHANGE_ERROR', payload: {id, error: ''}});
+        } catch (err) {
+          dispatch({type: 'CHANGE_ERROR', payload: {id, error: (err as Error).message}});
         }
-      } catch (err) {
-        dispatch({type: 'CHANGE_ERROR', payload: {id, error: (err as Error).message}});
       }
     },
-    [id, validator?.__isYupSchema__ && currentValue],
+    [id, validator?.[id]?.__isYupSchema__ && currentValue],
   );
 
   const changeError = useCallback(
