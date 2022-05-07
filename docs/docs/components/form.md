@@ -31,6 +31,8 @@ function MyForm() {
 
 ### Form with Validation
 
+You can use yup to validate form elements.
+
 ```jsx
 import {Form} from 'react-swift-form';
 
@@ -86,6 +88,33 @@ yarn add yup
 
 :::
 
+### Ref handle
+
+You can use the ref handle to update form elements without using the [Field](field) component's [changeValue](field#changevalue) prop.
+
+```jsx
+import {Form} from 'react-swift-form';
+import {useRef} from 'react';
+
+function MyForm() {
+  const formRef = useRef(null);
+  
+  const changeSomeValue = () => {
+    formRef.current?.changeValue('id-of-the-field', 'new value');
+  }
+  
+  return (
+    <div>
+      <Form ref={formRef}>
+        // Form elements and other components goes here
+      </Form>
+
+      <button onClick={changeSomeValue}>Change value</button>
+    </div>
+  );
+}
+```
+
 ## Props
 
 ### initialState
@@ -113,3 +142,55 @@ Validator items can be any yup schema.
 | Type                                 | Default     |
 | ------------------------------------ | ----------- |
 | Partial<Record<string, AnySchema\>\> | `undefined` |
+
+## Methods
+
+Methods can be accessed by using ref.
+
+### changeValue
+
+Changes the value of a form element.
+
+| Type                                                         |
+| ------------------------------------------------------------ |
+| (id: string, value: any \| ((prevValue: any) => any) => void |
+
+### changeValues
+
+Changes multiple values at once.
+
+| Type                                   |
+| -------------------------------------- |
+| (values: Record<string, any\>) => void |
+
+### changeError
+
+Changes the error of a form element.
+
+| Type                                      |
+| ----------------------------------------- |
+| (values: Record<string, string\>) => void |
+
+### changeErrors
+
+Changes multiple errors at once.
+
+| Type                                      |
+| ----------------------------------------- |
+| (values: Record<string, string\>) => void |
+
+### reset
+
+Resets the form to its initial state.
+
+| Type       |
+| ---------- |
+| () => void |
+
+### clear
+
+Clears the form.
+
+| Type       |
+| ---------- |
+| () => void |
