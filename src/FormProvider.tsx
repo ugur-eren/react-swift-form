@@ -102,15 +102,62 @@ export interface Props<T = any> {
 }
 
 interface RefHandle {
+  /**
+   * Returns the value of the given field.
+   * @param id Identifier of the field to change.
+   */
   getValue: (id: string) => any;
+
+  /**
+   * Returns the values of all fields.
+   */
   getValues: () => Record<string, any>;
+
+  /**
+   * Returns the error of the given field.
+   * @param id Identifier of the field to change.
+   */
   getError: (id: string) => any;
+
+  /**
+   * Returns the errors of all fields.
+   */
   getErrors: () => Record<string, string>;
+
+  /**
+   * Change the value of the given field.
+   * @param id Identifier of the field to change.
+   * @param action State or state action to change the value with.
+   */
   changeValue: (id: string, action: ChangeStateAction) => void;
+
+  /**
+   * Change the current values of the form with the given state.
+   * @param values Values to change to.
+   */
   changeValues: (state: StateType['values']) => void;
+
+  /**
+   * Change the error of the given field.
+   * @param id Identifier of the field to change.
+   * @param error Error message.
+   */
   changeError: (id: string, error: string) => void;
+
+  /**
+   * Change the current errors of the form with the given errors.
+   * @param errors Error messages.
+   */
   changeErrors: (errors: StateType['errors']) => void;
+
+  /**
+   * Resets the form to the initial state.
+   */
   reset: () => void;
+
+  /**
+   * Clears the form.
+   */
   clear: () => void;
 }
 
@@ -141,80 +188,42 @@ const FormProvider = forwardRef<RefHandle, Props>(
 
     const reducer = useReducer(FormReducer, initialState);
 
-    /**
-     * Returns the value of the given field.
-     * @param id Identifier of the field to change.
-     */
     const getValue = (id: string) => {
       return reducer[0].values[id];
     };
 
-    /**
-     * Returns the values of all fields.
-     */
     const getValues = () => {
       return reducer[0].values;
     };
 
-    /**
-     * Returns the error of the given field.
-     * @param id Identifier of the field to change.
-     */
     const getError = (id: string) => {
       return reducer[0].errors[id];
     };
 
-    /**
-     * Returns the errors of all fields.
-     */
     const getErrors = () => {
       return reducer[0].errors;
     };
 
-    /**
-     * Change the value of the given field.
-     * @param id Identifier of the field to change.
-     * @param action State or state action to change the value with.
-     */
     const changeValue = (id: string, action: ChangeStateAction) => {
       reducer[1]({type: 'CHANGE_VALUE', payload: {id, action}});
     };
 
-    /**
-     * Change the current values of the form with the given state.
-     * @param values Values to change to.
-     */
     const changeValues = (values: StateType['values']) => {
       reducer[1]({type: 'CHANGE_VALUES', payload: values});
     };
 
-    /**
-     * Change the error of the given field.
-     * @param id Identifier of the field to change.
-     * @param error Error message.
-     */
     const changeError = (id: string, error: string) => {
       reducer[1]({type: 'CHANGE_ERROR', payload: {id, error}});
     };
 
-    /**
-     * Change the current errors of the form with the given errors.
-     * @param errors Error messages.
-     */
     const changeErrors = (errors: StateType['errors']) => {
       reducer[1]({type: 'CHANGE_ERRORS', payload: errors});
     };
 
-    /**
-     * Reset the form to the initial state.
-     */
     const reset = () => {
       reducer[1]({type: 'RESET', payload: initialState});
     };
 
-    /**
-     * Clear the form.
-     */
     const clear = () => {
       reducer[1]({type: 'RESET'});
     };
