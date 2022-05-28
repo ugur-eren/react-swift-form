@@ -102,6 +102,10 @@ export interface Props<T = any> {
 }
 
 interface RefHandle {
+  getValue: (id: string) => any;
+  getValues: () => Record<string, any>;
+  getError: (id: string) => any;
+  getErrors: () => Record<string, string>;
   changeValue: (id: string, action: ChangeStateAction) => void;
   changeValues: (state: StateType['values']) => void;
   changeError: (id: string, error: string) => void;
@@ -136,6 +140,36 @@ const FormProvider = forwardRef<RefHandle, Props>(
     );
 
     const reducer = useReducer(FormReducer, initialState);
+
+    /**
+     * Returns the value of the given field.
+     * @param id Identifier of the field to change.
+     */
+    const getValue = (id: string) => {
+      return reducer[0].values[id];
+    };
+
+    /**
+     * Returns the values of all fields.
+     */
+    const getValues = () => {
+      return reducer[0].values;
+    };
+
+    /**
+     * Returns the error of the given field.
+     * @param id Identifier of the field to change.
+     */
+    const getError = (id: string) => {
+      return reducer[0].errors[id];
+    };
+
+    /**
+     * Returns the errors of all fields.
+     */
+    const getErrors = () => {
+      return reducer[0].errors;
+    };
 
     /**
      * Change the value of the given field.
@@ -186,6 +220,10 @@ const FormProvider = forwardRef<RefHandle, Props>(
     };
 
     useImperativeHandle(ref, () => ({
+      getValue,
+      getValues,
+      getError,
+      getErrors,
       changeValue,
       changeValues,
       changeError,
